@@ -593,10 +593,6 @@ class TarotApp {
             `;
         }).join('');
     }
-}
-
-// 애플리케이션 시작
-let app;
 
     /**
      * 미디어 권한 및 장치 정보 확인
@@ -632,6 +628,9 @@ let app;
         }
     }
 }
+
+// 애플리케이션 시작
+let app;
 
 window.addEventListener('DOMContentLoaded', () => {
     app = new TarotApp();
