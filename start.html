@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔮 AI 타로 상담 녹화 시스템</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* 시작 페이지 전용 스타일 */
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .start-container {
+            text-align: center;
+            max-width: 700px;
+            padding: 40px;
+        }
+        
+        .logo {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .start-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #D6BCFA 0%, #9F7AEA 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .start-description {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+        
+        .features {
+            background: rgba(45, 36, 56, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(159, 122, 234, 0.3);
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .feature-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+        
+        .feature-text {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+        
+        .start-btn {
+            display: inline-block;
+            padding: 20px 50px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+            animation: none;
+        }
+        
+        .info {
+            margin-top: 40px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(72, 187, 120, 0.2);
+            border: 1px solid var(--success-color);
+            border-radius: 10px;
+            color: var(--success-color);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="start-container">
+        <div class="logo">🔮</div>
+        <h1 class="start-title">AI 타로 상담 녹화 시스템</h1>
+        <p class="start-description">
+            혼자서도 자연스러운 타로 상담 영상을 촬영하세요<br>
+            AI 손님이 실제처럼 질문하고 반응합니다
+        </p>
+        
+        <div class="features">
+            <div class="feature-item">
+                <div class="feature-icon">🎥</div>
+                <div class="feature-text">웹캠으로 고화질 녹화</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🤖</div>
+                <div class="feature-text">AI가 손님 역할로 자연스러운 대화</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🗣️</div>
+                <div class="feature-text">한국어 음성으로 실시간 질문</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">💾</div>
+                <div class="feature-text">자동 저장 및 다운로드</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">✨</div>
+                <div class="feature-text">5가지 상담 시나리오 (연애/재물/진로/건강/종합)</div>
+            </div>
+        </div>
+
+        <div class="status">
+            ✅ 시스템 준비 완료 - 바로 사용 가능합니다!
+        </div>
+        
+        <br><br>
+        
+        <a href="index.html" class="start-btn">
+            🎬 녹화 시작하기
+        </a>
+        
+        <div class="info">
+            💡 클릭하면 메인 화면으로 이동합니다<br>
+            웹캠과 마이크 권한을 허용해주세요
+        </div>
+    </div>
+</body>
+</html>

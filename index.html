@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔮 AI 타로 상담 녹화 시스템</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo">
+                    <i class="fas fa-moon"></i>
+                    AI 타로 상담 녹화
+                    <i class="fas fa-star"></i>
+                </h1>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link active">
+                        <i class="fas fa-home"></i> 홈
+                    </a>
+                    <a href="settings.html" class="nav-link">
+                        <i class="fas fa-cog"></i> 설정
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Mobile Warning Alert -->
+            <div id="mobileAlert" class="alert alert-warning" style="display: none;">
+                <i class="fas fa-mobile-alt"></i>
+                <span>💡 <strong>권장:</strong> 이 시스템은 노트북/데스크톱에서 사용하시는 것을 추천합니다. 모바일에서는 화면이 작아 불편할 수 있습니다.</span>
+                <button class="alert-close" onclick="document.getElementById('mobileAlert').style.display='none'">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Setup Required Alert -->
+            <div id="setupAlert" class="alert alert-warning" style="display: none;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>먼저 <a href="settings.html">설정 페이지</a>에서 API 키를 입력해주세요!</span>
+                <button class="alert-close" onclick="closeAlert()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Recording Status -->
+            <div id="recordingStatus" class="recording-status" style="display: none;">
+                <div class="recording-indicator">
+                    <span class="recording-dot"></span>
+                    <span class="recording-text">녹화 중</span>
+                    <span class="recording-time" id="recordingTime">00:00</span>
+                </div>
+            </div>
+
+            <!-- Main Grid -->
+            <div class="main-grid">
+                <!-- Video Section -->
+                <section class="video-section card">
+                    <div class="card-header">
+                        <h2>
+                            <i class="fas fa-video"></i>
+                            웹캠 미리보기
+                        </h2>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <button id="toggleWebcamView" class="btn btn-ghost btn-sm" title="웹캠 미리보기 숨기기/보이기">
+                                <i class="fas fa-eye"></i>
+                                <span id="toggleWebcamText">미리보기 숨기기</span>
+                            </button>
+                            <div class="video-status" id="videoStatus">
+                                <i class="fas fa-circle"></i> 대기 중
+                            </div>
+                        </div>
+                    </div>
+                    <div class="video-container" id="videoContainer">
+                        <video id="webcam" autoplay muted playsinline></video>
+                        <div class="video-overlay" id="videoOverlay">
+                            <i class="fas fa-camera"></i>
+                            <p>웹캠 시작 버튼을 클릭하세요</p>
+                        </div>
+                        <!-- AI Avatar Container (shown when webcam is hidden) -->
+                        <div class="ai-avatar-container" id="aiAvatarContainer" style="display: none;">
+                            <div class="ai-avatar-circle">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <p class="ai-avatar-text">AI 손님</p>
+                            <p class="ai-avatar-sub">대화를 듣고 있습니다</p>
+                        </div>
+                    </div>
+                    <div class="video-controls">
+                        <button id="startWebcam" class="btn btn-primary">
+                            <i class="fas fa-play"></i>
+                            웹캠 시작
+                        </button>
+                        <button id="stopWebcam" class="btn btn-secondary" disabled>
+                            <i class="fas fa-stop"></i>
+                            웹캠 종료
+                        </button>
+                    </div>
+                </section>
+
+                <!-- AI Chat Section -->
+                <section class="chat-section card">
+                    <div class="card-header">
+                        <h2>
+                            <i class="fas fa-robot"></i>
+                            AI 손님 대화
+                        </h2>
+                        <div class="ai-status" id="aiStatus">
+                            <i class="fas fa-circle"></i> 대기 중
+                        </div>
+                    </div>
+                    <div class="chat-container" id="chatContainer">
+                        <div class="chat-welcome">
+                            <i class="fas fa-comments"></i>
+                            <p>AI 손님이 대화를 시작할 준비가 되었습니다</p>
+                            <p class="chat-welcome-sub">시나리오를 선택하고 상담을 시작하세요</p>
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <button id="speakNext" class="btn btn-accent" disabled>
+                            <i class="fas fa-volume-up"></i>
+                            다음 대화
+                        </button>
+                        <button id="skipSpeech" class="btn btn-ghost" disabled>
+                            <i class="fas fa-forward"></i>
+                            음성 스킵
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Scenario Selection -->
+            <section class="scenario-section card">
+                <div class="card-header">
+                    <h2>
+                        <i class="fas fa-book-open"></i>
+                        상담 시나리오 선택
+                    </h2>
+                </div>
+                <div class="scenario-grid" id="scenarioGrid">
+                    <div class="scenario-card" data-scenario="love">
+                        <div class="scenario-icon">💕</div>
+                        <h3>연애운 상담</h3>
+                        <p>좋아하는 사람과의 미래, 연애 고민</p>
+                    </div>
+                    <div class="scenario-card" data-scenario="wealth">
+                        <div class="scenario-icon">💰</div>
+                        <h3>재물운 상담</h3>
+                        <p>사업, 투자, 재정 상태</p>
+                    </div>
+                    <div class="scenario-card" data-scenario="career">
+                        <div class="scenario-icon">💼</div>
+                        <h3>진로/취업 상담</h3>
+                        <p>직장, 이직, 진로 선택</p>
+                    </div>
+                    <div class="scenario-card" data-scenario="health">
+                        <div class="scenario-icon">🏥</div>
+                        <h3>건강운 상담</h3>
+                        <p>건강 상태, 주의사항</p>
+                    </div>
+                    <div class="scenario-card" data-scenario="general">
+                        <div class="scenario-icon">🌟</div>
+                        <h3>종합 운세</h3>
+                        <p>전반적인 운세와 조언</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recording Controls -->
+            <section class="controls-section card">
+                <div class="card-header">
+                    <h2>
+                        <i class="fas fa-sliders-h"></i>
+                        녹화 컨트롤
+                    </h2>
+                </div>
+                <div class="controls-content">
+                    <div class="control-group">
+                        <label>선택된 시나리오:</label>
+                        <div class="selected-scenario" id="selectedScenario">
+                            <i class="fas fa-exclamation-circle"></i>
+                            시나리오를 선택해주세요
+                        </div>
+                    </div>
+                    
+                    <div class="control-buttons">
+                        <button id="startRecording" class="btn btn-success btn-lg" disabled>
+                            <i class="fas fa-circle"></i>
+                            녹화 시작
+                        </button>
+                        <button id="pauseRecording" class="btn btn-warning btn-lg" disabled>
+                            <i class="fas fa-pause"></i>
+                            일시정지
+                        </button>
+                        <button id="stopRecording" class="btn btn-danger btn-lg" disabled>
+                            <i class="fas fa-stop"></i>
+                            녹화 종료
+                        </button>
+                    </div>
+
+                    <div class="control-info">
+                        <div class="info-item">
+                            <i class="fas fa-info-circle"></i>
+                            <span>녹화 시작 후 AI가 자동으로 대화를 시작합니다</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>녹화 종료 시 자동으로 클라우드에 업로드됩니다</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recording History -->
+            <section class="history-section card">
+                <div class="card-header">
+                    <h2>
+                        <i class="fas fa-history"></i>
+                        녹화 기록
+                    </h2>
+                    <button class="btn btn-ghost btn-sm" onclick="clearHistory()">
+                        <i class="fas fa-trash"></i>
+                        전체 삭제
+                    </button>
+                </div>
+                <div class="history-content" id="historyContent">
+                    <div class="history-empty">
+                        <i class="fas fa-folder-open"></i>
+                        <p>아직 녹화 기록이 없습니다</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>🔮 AI 타로 상담 녹화 시스템 v1.0</p>
+            <p>Powered by Gemini AI, WebRTC & Web Speech API</p>
+        </div>
+    </footer>
+
+    <!-- Upload Progress Modal -->
+    <div id="uploadModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    클라우드 업로드 중
+                </h3>
+            </div>
+            <div class="modal-body">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="uploadProgress"></div>
+                </div>
+                <p class="progress-text" id="uploadText">업로드 준비 중...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-check-circle"></i>
+                    녹화 완료!
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>영상이 성공적으로 저장되었습니다!</p>
+                <div class="success-links">
+                    <a id="downloadLink" class="btn btn-primary" download>
+                        <i class="fas fa-download"></i>
+                        로컬 다운로드
+                    </a>
+                    <a id="cloudLink" class="btn btn-accent" target="_blank" style="display: none;">
+                        <i class="fas fa-cloud"></i>
+                        클라우드에서 보기
+                    </a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeSuccessModal()">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/scenarios.js"></script>
+    <script src="js/tts.js"></script>
+    <script src="js/gemini.js"></script>
+    <script src="js/recorder.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

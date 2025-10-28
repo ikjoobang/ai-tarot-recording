@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚙️ 설정 - AI 타로 상담 녹화 시스템</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1 class="logo">
+                    <i class="fas fa-moon"></i>
+                    AI 타로 상담 녹화
+                    <i class="fas fa-star"></i>
+                </h1>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-home"></i> 홈
+                    </a>
+                    <a href="settings.html" class="nav-link active">
+                        <i class="fas fa-cog"></i> 설정
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="settings-container">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1>
+                        <i class="fas fa-cog"></i>
+                        시스템 설정
+                    </h1>
+                    <p>API 키와 클라우드 저장소를 설정하세요</p>
+                </div>
+
+                <!-- Save Success Alert -->
+                <div id="saveAlert" class="alert alert-success" style="display: none;">
+                    <i class="fas fa-check-circle"></i>
+                    <span>설정이 저장되었습니다!</span>
+                </div>
+
+                <!-- Gemini API Section -->
+                <section class="settings-section card">
+                    <div class="card-header">
+                        <h2>
+                            <i class="fas fa-robot"></i>
+                            Gemini AI 설정
+                        </h2>
+                        <span class="status-badge" id="geminiStatus">미설정</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="geminiApiKey">
+                                <i class="fas fa-key"></i>
+                                Gemini API 키
+                            </label>
+                            <div class="input-group">
+                                <input 
+                                    type="password" 
+                                    id="geminiApiKey" 
+                                    class="form-control" 
+                                    placeholder="AIza..."
+                                >
+                                <button class="btn-toggle-password" onclick="togglePassword('geminiApiKey')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <small class="form-text">
+                                <a href="https://aistudio.google.com/app/apikey" target="_blank">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Google AI Studio에서 API 키 발급받기
+                                </a>
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <button class="btn btn-accent" onclick="testGeminiApi()">
+                                <i class="fas fa-vial"></i>
+                                API 연결 테스트
+                            </button>
+                            <span id="geminiTestResult"></span>
+                        </div>
+
+                        <div class="info-box">
+                            <h4><i class="fas fa-info-circle"></i> Gemini API 정보</h4>
+                            <ul>
+                                <li>무료 티어: 월 60 요청/분, 일 1,500 요청</li>
+                                <li>한국어 대화 생성 지원</li>
+                                <li>타로 상담 시나리오 자동 생성</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Cloud Storage Section -->
+                <section class="settings-section card">
+                    <div class="card-header">
+                        <h2>
+                            <i class="fas fa-cloud"></i>
+                            클라우드 저장소 설정
+                        </h2>
+                        <span class="status-badge" id="storageStatus">미설정</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-database"></i>
+                                저장소 선택
+                            </label>
+                            <div class="storage-options">
+                                <label class="storage-option">
+                                    <input type="radio" name="storageType" value="googledrive">
+                                    <div class="storage-card">
+                                        <i class="fab fa-google-drive"></i>
+                                        <h4>구글 드라이브</h4>
+                                        <p>무료 15GB</p>
+                                    </div>
+                                </label>
+                                <label class="storage-option">
+                                    <input type="radio" name="storageType" value="aws">
+                                    <div class="storage-card">
+                                        <i class="fab fa-aws"></i>
+                                        <h4>AWS S3</h4>
+                                        <p>첫 12개월 5GB 무료</p>
+                                    </div>
+                                </label>
+                                <label class="storage-option">
+                                    <input type="radio" name="storageType" value="local" checked>
+                                    <div class="storage-card">
+                                        <i class="fas fa-hdd"></i>
+                                        <h4>로컬 저장</h4>
+                                        <p>내 컴퓨터에만 저장</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Google Drive Settings -->
+                        <div id="googledriveSettings" class="storage-settings" style="display: none;">
+                            <h3><i class="fab fa-google-drive"></i> 구글 드라이브 설정</h3>
+                            
+                            <div class="form-group">
+                                <label for="googleClientId">
+                                    <i class="fas fa-id-card"></i>
+                                    클라이언트 ID
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="googleClientId" 
+                                    class="form-control" 
+                                    placeholder="123456789-abc.apps.googleusercontent.com"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="googleClientSecret">
+                                    <i class="fas fa-lock"></i>
+                                    클라이언트 시크릿
+                                </label>
+                                <div class="input-group">
+                                    <input 
+                                        type="password" 
+                                        id="googleClientSecret" 
+                                        class="form-control" 
+                                        placeholder="GOCSPX-..."
+                                    >
+                                    <button class="btn-toggle-password" onclick="togglePassword('googleClientSecret')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <button class="btn btn-primary" onclick="authenticateGoogleDrive()">
+                                    <i class="fab fa-google"></i>
+                                    구글 드라이브 연결
+                                </button>
+                                <span id="googleDriveStatus"></span>
+                            </div>
+
+                            <div class="info-box">
+                                <h4><i class="fas fa-info-circle"></i> 설정 방법</h4>
+                                <ol>
+                                    <li><a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a> 접속</li>
+                                    <li>프로젝트 생성 및 Google Drive API 활성화</li>
+                                    <li>OAuth 2.0 클라이언트 ID 생성</li>
+                                    <li>승인된 리디렉션 URI 추가: <code id="redirectUri"></code></li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <!-- AWS S3 Settings -->
+                        <div id="awsSettings" class="storage-settings" style="display: none;">
+                            <h3><i class="fab fa-aws"></i> AWS S3 설정</h3>
+                            
+                            <div class="form-group">
+                                <label for="awsAccessKey">
+                                    <i class="fas fa-key"></i>
+                                    Access Key ID
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="awsAccessKey" 
+                                    class="form-control" 
+                                    placeholder="AKIA..."
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="awsSecretKey">
+                                    <i class="fas fa-lock"></i>
+                                    Secret Access Key
+                                </label>
+                                <div class="input-group">
+                                    <input 
+                                        type="password" 
+                                        id="awsSecretKey" 
+                                        class="form-control" 
+                                        placeholder="wJalr..."
+                                    >
+                                    <button class="btn-toggle-password" onclick="togglePassword('awsSecretKey')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="awsRegion">
+                                    <i class="fas fa-globe"></i>
+                                    리전
+                                </label>
+                                <select id="awsRegion" class="form-control">
+                                    <option value="ap-northeast-2">아시아 태평양 (서울) - ap-northeast-2</option>
+                                    <option value="ap-northeast-1">아시아 태평양 (도쿄) - ap-northeast-1</option>
+                                    <option value="us-east-1">미국 동부 (버지니아 북부) - us-east-1</option>
+                                    <option value="us-west-2">미국 서부 (오레곤) - us-west-2</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="awsBucket">
+                                    <i class="fas fa-folder"></i>
+                                    버킷 이름
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="awsBucket" 
+                                    class="form-control" 
+                                    placeholder="my-tarot-recordings"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <button class="btn btn-accent" onclick="testAwsConnection()">
+                                    <i class="fas fa-vial"></i>
+                                    AWS 연결 테스트
+                                </button>
+                                <span id="awsTestResult"></span>
+                            </div>
+
+                            <div class="info-box">
+                                <h4><i class="fas fa-info-circle"></i> 설정 방법</h4>
+                                <ol>
+                                    <li>AWS 콘솔에서 S3 버킷 생성</li>
+                                    <li>IAM 사용자 생성 (S3 Full Access 권한)</li>
+                                    <li>Access Key 생성 및 다운로드</li>
+                                    <li>버킷에 CORS 설정 추가</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <!-- Local Storage Info -->
+                        <div id="localSettings" class="storage-settings">
+                            <div class="info-box info-box-primary">
+                                <h4><i class="fas fa-hdd"></i> 로컬 저장 정보</h4>
+                                <ul>
+                                    <li>녹화된 영상이 내 컴퓨터에만 저장됩니다</li>
+                                    <li>자동으로 다운로드 폴더에 저장됩니다</li>
+                                    <li>클라우드 백업은 수동으로 해야 합니다</li>
+                                    <li>API 키 없이도 사용 가능합니다</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TTS Settings Section -->
+                <section class="settings-section card">
+                    <div class="card-header">
+                        <h2>
+                            <i class="fas fa-volume-up"></i>
+                            음성 합성 설정
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="ttsVoice">
+                                <i class="fas fa-microphone"></i>
+                                음성 선택
+                            </label>
+                            <select id="ttsVoice" class="form-control">
+                                <option value="">기본 한국어 음성</option>
+                            </select>
+                            <small class="form-text">브라우저에서 지원하는 음성 목록</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ttsSpeed">
+                                <i class="fas fa-tachometer-alt"></i>
+                                말하기 속도: <span id="ttsSpeedValue">1.0</span>
+                            </label>
+                            <input 
+                                type="range" 
+                                id="ttsSpeed" 
+                                class="form-range" 
+                                min="0.5" 
+                                max="2.0" 
+                                step="0.1" 
+                                value="1.0"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ttsPitch">
+                                <i class="fas fa-music"></i>
+                                음높이: <span id="ttsPitchValue">1.0</span>
+                            </label>
+                            <input 
+                                type="range" 
+                                id="ttsPitch" 
+                                class="form-range" 
+                                min="0.5" 
+                                max="2.0" 
+                                step="0.1" 
+                                value="1.0"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <button class="btn btn-primary" onclick="testTTS()">
+                                <i class="fas fa-play"></i>
+                                음성 테스트
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Advanced Settings -->
+                <section class="settings-section card">
+                    <div class="card-header">
+                        <h2>
+                            <i class="fas fa-cogs"></i>
+                            고급 설정
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="autoStart" class="form-checkbox">
+                                녹화 시작 시 AI 대화 자동 시작
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="autoUpload" class="form-checkbox">
+                                녹화 종료 시 자동 업로드
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="showSubtitles" class="form-checkbox">
+                                AI 대화 자막 표시
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="videoQuality">
+                                <i class="fas fa-film"></i>
+                                비디오 품질
+                            </label>
+                            <select id="videoQuality" class="form-control">
+                                <option value="low">저화질 (360p)</option>
+                                <option value="medium" selected>중화질 (720p)</option>
+                                <option value="high">고화질 (1080p)</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Action Buttons -->
+                <div class="settings-actions">
+                    <button class="btn btn-success btn-lg" onclick="saveSettings()">
+                        <i class="fas fa-save"></i>
+                        설정 저장
+                    </button>
+                    <button class="btn btn-danger btn-lg" onclick="resetSettings()">
+                        <i class="fas fa-undo"></i>
+                        초기화
+                    </button>
+                    <a href="index.html" class="btn btn-ghost btn-lg">
+                        <i class="fas fa-arrow-left"></i>
+                        메인으로 돌아가기
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>🔮 AI 타로 상담 녹화 시스템 v1.0</p>
+            <p>Powered by Gemini AI, WebRTC & Web Speech API</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/tts.js"></script>
+    <script>
+        // Load settings on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSettings();
+            loadVoices();
+            setupEventListeners();
+            displayRedirectUri();
+        });
+
+        // Display current URL as redirect URI
+        function displayRedirectUri() {
+            const redirectUri = document.getElementById('redirectUri');
+            if (redirectUri) {
+                redirectUri.textContent = window.location.origin + window.location.pathname;
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Storage type change
+            document.querySelectorAll('input[name="storageType"]').forEach(radio => {
+                radio.addEventListener('change', handleStorageTypeChange);
+            });
+
+            // TTS sliders
+            document.getElementById('ttsSpeed').addEventListener('input', (e) => {
+                document.getElementById('ttsSpeedValue').textContent = e.target.value;
+            });
+
+            document.getElementById('ttsPitch').addEventListener('input', (e) => {
+                document.getElementById('ttsPitchValue').textContent = e.target.value;
+            });
+        }
+
+        // Handle storage type change
+        function handleStorageTypeChange(e) {
+            // Hide all storage settings
+            document.querySelectorAll('.storage-settings').forEach(div => {
+                div.style.display = 'none';
+            });
+
+            // Show selected storage settings
+            const storageType = e.target.value;
+            if (storageType === 'googledrive') {
+                document.getElementById('googledriveSettings').style.display = 'block';
+            } else if (storageType === 'aws') {
+                document.getElementById('awsSettings').style.display = 'block';
+            } else if (storageType === 'local') {
+                document.getElementById('localSettings').style.display = 'block';
+            }
+        }
+
+        // Load saved settings
+        function loadSettings() {
+            const settings = JSON.parse(localStorage.getItem('tarotAppSettings') || '{}');
+            
+            // Gemini API
+            if (settings.geminiApiKey) {
+                document.getElementById('geminiApiKey').value = settings.geminiApiKey;
+                document.getElementById('geminiStatus').textContent = '설정됨';
+                document.getElementById('geminiStatus').className = 'status-badge status-success';
+            }
+
+            // Storage type
+            if (settings.storageType) {
+                document.querySelector(`input[name="storageType"][value="${settings.storageType}"]`).checked = true;
+                handleStorageTypeChange({ target: { value: settings.storageType } });
+            }
+
+            // Google Drive
+            if (settings.googleClientId) document.getElementById('googleClientId').value = settings.googleClientId;
+            if (settings.googleClientSecret) document.getElementById('googleClientSecret').value = settings.googleClientSecret;
+
+            // AWS
+            if (settings.awsAccessKey) document.getElementById('awsAccessKey').value = settings.awsAccessKey;
+            if (settings.awsSecretKey) document.getElementById('awsSecretKey').value = settings.awsSecretKey;
+            if (settings.awsRegion) document.getElementById('awsRegion').value = settings.awsRegion;
+            if (settings.awsBucket) document.getElementById('awsBucket').value = settings.awsBucket;
+
+            // TTS
+            if (settings.ttsVoice) document.getElementById('ttsVoice').value = settings.ttsVoice;
+            if (settings.ttsSpeed) {
+                document.getElementById('ttsSpeed').value = settings.ttsSpeed;
+                document.getElementById('ttsSpeedValue').textContent = settings.ttsSpeed;
+            }
+            if (settings.ttsPitch) {
+                document.getElementById('ttsPitch').value = settings.ttsPitch;
+                document.getElementById('ttsPitchValue').textContent = settings.ttsPitch;
+            }
+
+            // Advanced
+            if (settings.autoStart) document.getElementById('autoStart').checked = settings.autoStart;
+            if (settings.autoUpload) document.getElementById('autoUpload').checked = settings.autoUpload;
+            if (settings.showSubtitles) document.getElementById('showSubtitles').checked = settings.showSubtitles;
+            if (settings.videoQuality) document.getElementById('videoQuality').value = settings.videoQuality;
+
+            // Update storage status
+            updateStorageStatus(settings);
+        }
+
+        // Update storage status badge
+        function updateStorageStatus(settings) {
+            const storageStatus = document.getElementById('storageStatus');
+            const storageType = settings.storageType || 'local';
+            
+            if (storageType === 'local') {
+                storageStatus.textContent = '로컬 저장';
+                storageStatus.className = 'status-badge status-info';
+            } else if (storageType === 'googledrive' && settings.googleClientId) {
+                storageStatus.textContent = '구글 드라이브';
+                storageStatus.className = 'status-badge status-success';
+            } else if (storageType === 'aws' && settings.awsAccessKey) {
+                storageStatus.textContent = 'AWS S3';
+                storageStatus.className = 'status-badge status-success';
+            } else {
+                storageStatus.textContent = '미설정';
+                storageStatus.className = 'status-badge';
+            }
+        }
+
+        // Load available voices
+        function loadVoices() {
+            const voiceSelect = document.getElementById('ttsVoice');
+            const voices = speechSynthesis.getVoices();
+            
+            // Filter Korean voices
+            const koreanVoices = voices.filter(voice => voice.lang.startsWith('ko'));
+            
+            koreanVoices.forEach(voice => {
+                const option = document.createElement('option');
+                option.value = voice.name;
+                option.textContent = `${voice.name} (${voice.lang})`;
+                voiceSelect.appendChild(option);
+            });
+
+            // Load on voices changed
+            speechSynthesis.onvoiceschanged = () => loadVoices();
+        }
+
+        // Save settings
+        function saveSettings() {
+            const settings = {
+                geminiApiKey: document.getElementById('geminiApiKey').value,
+                storageType: document.querySelector('input[name="storageType"]:checked').value,
+                googleClientId: document.getElementById('googleClientId').value,
+                googleClientSecret: document.getElementById('googleClientSecret').value,
+                awsAccessKey: document.getElementById('awsAccessKey').value,
+                awsSecretKey: document.getElementById('awsSecretKey').value,
+                awsRegion: document.getElementById('awsRegion').value,
+                awsBucket: document.getElementById('awsBucket').value,
+                ttsVoice: document.getElementById('ttsVoice').value,
+                ttsSpeed: document.getElementById('ttsSpeed').value,
+                ttsPitch: document.getElementById('ttsPitch').value,
+                autoStart: document.getElementById('autoStart').checked,
+                autoUpload: document.getElementById('autoUpload').checked,
+                showSubtitles: document.getElementById('showSubtitles').checked,
+                videoQuality: document.getElementById('videoQuality').value
+            };
+
+            localStorage.setItem('tarotAppSettings', JSON.stringify(settings));
+            
+            // Show success alert
+            const alert = document.getElementById('saveAlert');
+            alert.style.display = 'flex';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+
+            // Update status badges
+            updateStorageStatus(settings);
+            if (settings.geminiApiKey) {
+                document.getElementById('geminiStatus').textContent = '설정됨';
+                document.getElementById('geminiStatus').className = 'status-badge status-success';
+            }
+        }
+
+        // Reset settings
+        function resetSettings() {
+            if (confirm('모든 설정을 초기화하시겠습니까?')) {
+                localStorage.removeItem('tarotAppSettings');
+                location.reload();
+            }
+        }
+
+        // Toggle password visibility
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const button = input.nextElementSibling;
+            const icon = button.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        }
+
+        // Test Gemini API
+        async function testGeminiApi() {
+            const apiKey = document.getElementById('geminiApiKey').value;
+            const resultSpan = document.getElementById('geminiTestResult');
+            
+            if (!apiKey) {
+                resultSpan.innerHTML = '<span class="text-error">API 키를 입력하세요</span>';
+                return;
+            }
+
+            resultSpan.innerHTML = '<span class="text-info">테스트 중...</span>';
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: "Hello"
+                            }]
+                        }]
+                    })
+                });
+
+                if (response.ok) {
+                    resultSpan.innerHTML = '<span class="text-success"><i class="fas fa-check-circle"></i> 연결 성공!</span>';
+                } else {
+                    resultSpan.innerHTML = '<span class="text-error"><i class="fas fa-times-circle"></i> 연결 실패</span>';
+                }
+            } catch (error) {
+                resultSpan.innerHTML = '<span class="text-error"><i class="fas fa-times-circle"></i> 오류 발생</span>';
+            }
+        }
+
+        // Test TTS
+        function testTTS() {
+            const voice = document.getElementById('ttsVoice').value;
+            const speed = parseFloat(document.getElementById('ttsSpeed').value);
+            const pitch = parseFloat(document.getElementById('ttsPitch').value);
+            
+            const utterance = new SpeechSynthesisUtterance('안녕하세요, 타로 상담을 시작하겠습니다.');
+            utterance.lang = 'ko-KR';
+            utterance.rate = speed;
+            utterance.pitch = pitch;
+            
+            if (voice) {
+                const voices = speechSynthesis.getVoices();
+                const selectedVoice = voices.find(v => v.name === voice);
+                if (selectedVoice) utterance.voice = selectedVoice;
+            }
+            
+            speechSynthesis.speak(utterance);
+        }
+
+        // Authenticate Google Drive
+        function authenticateGoogleDrive() {
+            alert('구글 드라이브 OAuth 인증은 구현 예정입니다.\n현재는 로컬 저장을 사용해주세요.');
+        }
+
+        // Test AWS Connection
+        async function testAwsConnection() {
+            alert('AWS S3 연결 테스트는 구현 예정입니다.\n현재는 로컬 저장을 사용해주세요.');
+        }
+    </script>
+</body>
+</html>
