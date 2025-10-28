@@ -359,6 +359,42 @@ a:hover {
     display: flex;
     gap: var(--spacing-sm);
     padding: var(--spacing-md);
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.camera-select-wrapper {
+    flex: 1;
+    min-width: 200px;
+}
+
+.camera-select {
+    width: 100%;
+    padding: 10px 12px;
+    background: rgba(26, 22, 37, 0.8);
+    border: 1px solid rgba(159, 122, 234, 0.3);
+    border-radius: var(--radius-sm);
+    color: var(--text-color);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.camera-select:hover {
+    border-color: var(--accent-color);
+    background: rgba(26, 22, 37, 0.9);
+}
+
+.camera-select:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(159, 122, 234, 0.2);
+}
+
+.camera-select option {
+    background: var(--bg-dark);
+    color: var(--text-color);
+    padding: 10px;
 }
 
 /* === AI Avatar (when webcam is hidden) === */
