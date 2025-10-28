@@ -39,6 +39,9 @@ class TarotApp {
         
         // 권한 및 장치 정보 확인
         await this.checkMediaPermissions();
+        
+        // 카메라 목록 불러오기
+        await this.loadCameraList();
     }
 
     /**
@@ -53,6 +56,7 @@ class TarotApp {
         this.elements.aiAvatarContainer = document.getElementById('aiAvatarContainer');
         this.elements.toggleWebcamView = document.getElementById('toggleWebcamView');
         this.elements.toggleWebcamText = document.getElementById('toggleWebcamText');
+        this.elements.cameraSelect = document.getElementById('cameraSelect');
         this.elements.startWebcam = document.getElementById('startWebcam');
         this.elements.stopWebcam = document.getElementById('stopWebcam');
         this.state.webcamHidden = false;
@@ -98,6 +102,11 @@ class TarotApp {
         // 웹캠 미리보기 토글
         if (this.elements.toggleWebcamView) {
             this.elements.toggleWebcamView.addEventListener('click', () => this.toggleWebcamVisibility());
+        }
+        
+        // 카메라 선택 변경
+        if (this.elements.cameraSelect) {
+            this.elements.cameraSelect.addEventListener('change', () => this.handleCameraChange());
         }
 
         // 녹화 버튼
@@ -151,6 +160,53 @@ class TarotApp {
     }
 
     /**
+     * 카메라 목록 불러오기
+     */
+    async loadCameraList() {
+        try {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const videoDevices = devices.filter(device => device.kind === 'videoinput');
+            
+            console.log('📹 발견된 카메라:', videoDevices.length, '개');
+            
+            if (videoDevices.length === 0) {
+                this.elements.cameraSelect.innerHTML = '<option value="">카메라를 찾을 수 없습니다</option>';
+                return;
+            }
+            
+            // 드롭다운 채우기
+            this.elements.cameraSelect.innerHTML = videoDevices.map((device, index) => {
+                const label = device.label || `카메라 ${index + 1}`;
+                return `<option value="${device.deviceId}">${label}</option>`;
+            }).join('');
+            
+            // 첫 번째 카메라 자동 선택
+            if (videoDevices.length > 0 && !this.elements.cameraSelect.value) {
+                this.elements.cameraSelect.value = videoDevices[0].deviceId;
+            }
+            
+        } catch (error) {
+            console.error('❌ 카메라 목록 로드 실패:', error);
+            this.elements.cameraSelect.innerHTML = '<option value="">카메라 목록 로드 실패</option>';
+        }
+    }
+    
+    /**
+     * 카메라 변경 처리
+     */
+    async handleCameraChange() {
+        // 웹캠이 이미 켜져 있으면 재시작
+        if (this.state.webcamActive) {
+            console.log('🔄 카메라 전환 중...');
+            await this.handleStopWebcam();
+            // 짧은 대기 후 재시작
+            setTimeout(() => {
+                this.handleStartWebcam();
+            }, 500);
+        }
+    }
+
+    /**
      * 웹캠 시작
      */
     async handleStartWebcam() {
@@ -160,7 +216,13 @@ class TarotApp {
             const settings = JSON.parse(localStorage.getItem('tarotAppSettings') || '{}');
             const quality = settings.videoQuality || 'medium';
             
-            const result = await VideoRecorder.startWebcam(this.elements.webcam, { quality });
+            // 선택된 카메라 ID 가져오기
+            const selectedCameraId = this.elements.cameraSelect.value;
+            
+            const result = await VideoRecorder.startWebcam(this.elements.webcam, { 
+                quality,
+                deviceId: selectedCameraId 
+            });
             
             if (result.success) {
                 this.state.webcamActive = true;
