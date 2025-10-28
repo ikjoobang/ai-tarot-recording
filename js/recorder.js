@@ -39,14 +39,23 @@ const VideoRecorder = {
             const quality = this.getQualitySettings(options.quality || 'medium');
             console.log('📹 비디오 품질 설정:', quality);
             
+            // 비디오 제약 조건 생성
+            const videoConstraints = {
+                width: quality.width,
+                height: quality.height,
+                frameRate: quality.frameRate
+            };
+            
+            // 특정 카메라 ID가 지정된 경우
+            if (options.deviceId) {
+                videoConstraints.deviceId = { exact: options.deviceId };
+                console.log('📹 선택된 카메라 ID:', options.deviceId);
+            }
+            
             // 미디어 스트림 요청
             console.log('🔑 카메라 권한 요청 중...');
             this.stream = await navigator.mediaDevices.getUserMedia({
-                video: {
-                    width: quality.width,
-                    height: quality.height,
-                    frameRate: quality.frameRate
-                },
+                video: videoConstraints,
                 audio: {
                     echoCancellation: true,
                     noiseSuppression: true,
